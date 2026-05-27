@@ -7,6 +7,8 @@
 
 Compara **3 estratégias de prompt** × **3 provedores de LLM** numa tarefa fixa de classificação de sentimento (NPL) no domínio de **supply chain de peças para caminhões**.
 
+![Arquitetura do pipeline](docs/arquitetura_projeto.png)
+
 ### Estratégias testadas
 | Estratégia | Descrição |
 |---|---|
