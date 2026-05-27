@@ -132,3 +132,10 @@ Na estratégia chain-of-thought, o modelo escreve raciocínio antes da resposta 
 ---
 
 ## Referência metodológica
+Pauletti, J. P. O.; Silva, M. P. F. *Análise de Estratégias em Prompt Engineering para identificação de pontos de otimização*. TCC — PUC Minas, 2025.
+
+Jarrett et al. (2025). *An overview of model uncertainty and variability in LLM-based sentiment analysis: challenges, mitigation strategies, and the role of explainability*. Revisão publicada na Frontiers in Artificial Intelligence. Disponível em: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1609097/full
+
+Zhou et al. (2024) apud artigo *Enhancing Sentiment Classification and Irony Detection in Large Language Models through Advanced Prompt Engineering Techniques*. arXiv:2601.08302. Disponível em: https://arxiv.org/pdf/2601.08302
+
+*Enhance Multi-domain Sentiment Analysis of Review Texts through Prompting Strategies*. arXiv:2309.02045. Disponível em: https://arxiv.org/pdf/2309.02045
