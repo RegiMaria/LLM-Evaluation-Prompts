@@ -1,0 +1,19 @@
+# Variáveis de ambiente
+.env
+
+# Resultados gerados
+results/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
