@@ -17,11 +17,12 @@ Compara **3 estratégias de prompt** × **3 provedores de LLM** numa tarefa fixa
 | Chain-of-Thought | Raciocínio passo a passo antes da resposta |
 
 ### Provedores testados
-| Provedor | Modelo |
-|---|---|
-| OpenAI | gpt-4o-mini |
-| Gemini | gemini-1.5-flash |
-| Anthropic | claude-haiku-4-5 |
+### Provedores testados
+| Provedor | Modelo | Justificativa |
+|---|---|---|
+| OpenAI | gpt-4.1-mini | Modelo leve de última geração, substituto oficial do gpt-4o-mini |
+| Gemini | gemini-2.5-flash | Modelo rápido e custo-eficiente da família 2.5 |
+| Anthropic | claude-haiku-4-5 | Modelo leve da família Claude 4 |
 
 ### Métricas coletadas
 - **Acurácia geral e por classe** (positivo / negativo / neutro) mede se o modelo acertou o label correto (tarefa de classificação)
