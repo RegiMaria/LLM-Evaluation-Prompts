@@ -31,3 +31,21 @@ def zero_shot(text: str) -> tuple[str, str]:
     system = TASK_INSTRUCTION
     user = f"Frase: {text}\nSentimento:"
     return system, user
+
+def few_shot(text: str) -> tuple[str, str]:
+    """
+    Few-shot: 3 exemplos demonstrativos no prompt antes da frase alvo.
+    Os exemplos ancoram o modelo na terminologia e no estilo do domínio.
+    Baseado na Figura 1 do trabalho de Pauletti & Silva(2025) e em Wang e Luo (2023),
+    que demonstraram ganhos expressivos de few-shot em domínios especializados.
+
+    Os exemplos few-shot são mantidos fora do dataset de avaliação
+    para evitar data leakage.
+    """
+    system = TASK_INSTRUCTION
+    examples = "\n".join(
+        f"Frase: {ex['text']}\nSentimento: {ex['label']}"
+        for ex in FEW_SHOT_EXAMPLES
+    )
+    user = f"{examples}\n\nFrase: {text}\nSentimento:"
+    return system, user
