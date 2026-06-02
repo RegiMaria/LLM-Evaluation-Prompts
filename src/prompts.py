@@ -49,3 +49,47 @@ def few_shot(text: str) -> tuple[str, str]:
     )
     user = f"{examples}\n\nFrase: {text}\nSentimento:"
     return system, user
+
+def chain_of_thought(text: str) -> tuple[str, str]:
+    """
+    Chain-of-thought: decomposição passo a passo antes da resposta final.
+    Baseado na Figura 2 do trabalho de Pauletti & Silva (2025) e em Wei et al. (2022).
+
+    ADR-006: o passo 3 foi adicionado para cobrir borderline cases (ADR-003,
+    ADR-004),frases onde a polaridade depende de trade-offs operacionais
+    e não pode ser inferida apenas por palavras-chave. 
+    Exemplo:
+    "A ruptura foi evitada mediante compra emergencial com custo 40% maior."
+    Sem o passo de trade-off, o modelo tende a classificar como positivo
+    (ruptura evitada) ignorando o custo adicional de 40%.
+
+    A resposta FINAL deve ser apenas a palavra do sentimento.
+    """
+    system = (
+        "Você é um especialista em análise de supply chain de peças para caminhões. "
+        "Para classificar o sentimento de uma frase, siga EXATAMENTE estes passos:\n"
+        "1. Identifique as palavras-chave que indicam ocorrências positivas, "
+        "negativas ou neutras.\n"
+        "2. Avalie se há impacto operacional direto (atrasos, falhas, "
+        "economias, melhorias, rupturas, conformidade).\n"
+        "3. Considere se existe um trade-off: um resultado aparentemente "
+        "positivo pode ter consequência negativa para a operação, e vice-versa. "
+        "Avalie o impacto líquido para o negócio.\n"
+        "4. Decida o sentimento predominante considerando o contexto "
+        "operacional completo, não apenas palavras isoladas.\n"
+        "5. Escreva na última linha SOMENTE a palavra final: "
+        "positivo, negativo ou neutro."
+    )
+    user = (
+        f"Frase: {text}\n\n"
+        "Pense passo a passo e escreva sua análise. "
+        "Na última linha, escreva apenas a palavra do sentimento."
+    )
+    return system, user
+
+
+STRATEGIES = {
+    "zero_shot": zero_shot,
+    "few_shot": few_shot,
+    "chain_of_thought": chain_of_thought,
+}
