@@ -64,7 +64,7 @@ Não deve ser interpretado como evidência definitiva de superioridade entre mod
 
 **Contexto**
 
-A primeira versão do dataset continha predominantemente exemplos com polaridade explícita.
+A primeira versão do dataset contém predominantemente exemplos com polaridade explícita.
 
 Exemplos:
 
@@ -147,3 +147,18 @@ Exemplos adicionados:
 
 Resultado:
 O benchmark deixa de avaliar apenas reconhecimento de palavras-chave e passa a avaliar interpretação de conceitos de supply chain, planejamento de estoque, capacidade operacional, reposição, homologação e nível de serviço.
+
+ ## ADR-005: Evolução futura
+
+ Evolução futura do benchmark
+
+A versão atual do dataset incorpora aproximadamente 23% de exemplos de maior complexidade semântica, distribuídos entre as três classes de sentimento.
+
+Esses exemplos foram projetados para reduzir a dependência de pistas lexicais explícitas e exigir interpretação de conceitos operacionais de supply chain, como nível de serviço, cobertura de estoque, capacidade produtiva, trade-offs de custo e desempenho logístico.
+
+Como evolução futura, pretende-se introduzir uma *estratificação formal de dificuldade*, classificando cada amostra como:
+
+Standard
+Borderline
+
+Essa estrutura permitirá medir separadamente o desempenho dos modelos em exemplos convencionais e em casos de fronteira, possibilitando análises de robustez semântica e comparação da contribuição marginal de estratégias como Few-Shot e Chain-of-Thought em cenários de maior complexidade interpretativa.
