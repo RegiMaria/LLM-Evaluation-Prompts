@@ -17,3 +17,17 @@ TASK_INSTRUCTION = (
     "Responda SOMENTE com uma das três palavras, sem pontuação nem explicação."
 )
 
+def zero_shot(text: str) -> tuple[str, str]:
+    """
+    Tuple - quem recebe não deve modificar
+    Zero-shot: instrução direta, sem exemplos.Sem demonstrações de como responder.
+    O modelo precisa inferir sozinho o que fazer.
+    Serve como baseline - se few-shot e CoT não superarem o zero-shot
+    de forma significativa (>18 pp), o modelo já generaliza bem para
+    o domínio sem auxílio.
+    Isto é, Se as técnicas avançadas não melhoram muito, a conclusão é:
+    o modelo já entende supply chain de caminhões por conta própria, sem precisar de exemplos ou raciocínio guiado
+    """
+    system = TASK_INSTRUCTION
+    user = f"Frase: {text}\nSentimento:"
+    return system, user
