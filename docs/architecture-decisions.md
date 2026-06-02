@@ -162,3 +162,59 @@ Standard
 Borderline
 
 Essa estrutura permitirá medir separadamente o desempenho dos modelos em exemplos convencionais e em casos de fronteira, possibilitando análises de robustez semântica e comparação da contribuição marginal de estratégias como Few-Shot e Chain-of-Thought em cenários de maior complexidade interpretativa.
+
+## ADR-006: Atualização do CoT para raciocínio sobre trade-offs operacionais
+
+Data: 02-06-2026
+
+Contexto
+
+A introdução de borderline cases no dataset (ADR-003, ADR-004) criou um desalinhamento com o prompt de Chain-of-Thought existente.
+O CoT original instruía o modelo a:
+
+- Identificar palavras-chave positivas, negativas ou neutras
+- Avaliar impacto operacional
+- Decidir o sentimento
+
+Esse fluxo é suficiente para exemplos com polaridade explícita, mas inadequado para borderline cases onde a classificação correta depende de raciocínio sobre trade-offs operacionais.
+
+Exemplo do problema
+
+Frase: "A ruptura foi evitada mediante compra emergencial com custo 40% maior."
+
+Com o CoT anterior, o modelo tende a identificar "ruptura evitada" como pista positiva e classificar incorretamente como positivo, ignorando o custo emergencial de 40% como consequência negativa para o negócio.
+
+O label correto(neutro)só é alcançado quando o modelo pondera o trade-off entre os dois efeitos.
+
+Decisão
+
+Adicionar o passo 3 ao CoT:
+
+>  "Considere se existe um trade-off: um resultado aparentemente positivo pode ter consequência negativa para a operação, e vice-versa. Avalie o impacto líquido para o negócio."
+
+Os passos originais foram renumerados: o passo anterior de decisão passou para 4, e o de output para 5.
+
+Justificativa
+
+Sem esse ajuste, o CoT não estaria calibrado para a dificuldade real do dataset após ADR-004. Uma falha de desempenho nos borderlines poderia ser atribuída à estratégia de prompt, quando na verdade seria uma falha de design do prompt.
+
+O objetivo do benchmark é isolar o efeito da estratégia, isso exige que cada estratégia esteja adequadamente calibrada para o dataset que está sendo avaliado.
+
+Consequências
+O CoT agora instrui o modelo a raciocinar explicitamente sobre:
+
+- Pistas lexicais (passo 1)
+- Impacto operacional direto (passo 2)
+- Trade-offs e impacto líquido (passo 3 — novo)
+- Decisão considerando contexto completo (passo 4)
+- Output do label final (passo 5)
+
+Esse alinhamento entre design do dataset e design do prompt é o que vai permitie atribuir diferenças de desempenho à estratégia, não a ruído de design.
+
+Referências
+
+ADR-003: Introdução de exemplos de fronteira
+ADR-004: Substituição de 21 amostras por borderline cases
+Wei et al. (2022): Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+Wang e Luo (2023): Enhance Multi-domain Sentiment Analysis through Prompting Strategies
+
