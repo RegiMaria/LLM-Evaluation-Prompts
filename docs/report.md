@@ -18,10 +18,6 @@ O experimento investiga a seguinte questão de pesquisa:
 
 A hipótese de trabalho, fundamentada na literatura, é que domínios técnicos com sentimento implícito e exemplos que exigem raciocínio contextual amplificam as diferenças entre estratégias de prompting, ao contrário de domínios genéricos, onde o zero-shot frequentemente apresenta desempenho elevado e os ganhos obtidos por estratégias mais sofisticadas tendem a ser marginais. 
 
-O experimento investiga a seguinte questão de pesquisa:
-
-> Em um domínio técnico especializado, estratégias estruturadas de prompt (few-shot e chain-of-thought) produzem ganhos de acurácia mensuráveis em relação ao baseline zero-shot, e esse comportamento varia entre provedores de LLM?
-
 A hipótese de trabalho, fundamentada na literatura, é que domínios técnicos com sentimento **implícito amplificam as diferenças entre estratégias**, ao contrário de domínios genéricos como reviews de produtos, onde o **zero-shot** já performa bem e as estratégias adicionais produzem ganhos marginais (Wang e Luo, 2023).
 
 ### 2. Justificativa do Domínio ###
@@ -53,10 +49,13 @@ O dataset foi construído manualmente com 90 frases do domínio de supply chain 
 | Negativo | 30 | ruptura de estoque, atraso, não conformidade, parada de frota         |
 | Neutro   | 30 | pedido em processamento, contrato vigente, inventário trimestral      |
 
+Além de exemplos com polaridade explícita, o dataset incorpora deliberadamente uma parcela de casos de fronteira (*borderline cases*), nos quais a classificação correta depende da interpretação de indicadores operacionais, relações de causa e efeito e conceitos específicos de supply chain.
 
-As frases foram elaboradas para refletir comunicações reais de operações de supply chain — relatórios de fornecedores, alertas de estoque, registros de recebimento, com terminologia técnica que desafia modelos treinados em corpora genéricos.
+Esses exemplos foram incluídos para reduzir a dependência de pistas lexicais superficiais e aumentar a capacidade do benchmark de avaliar compreensão contextual e raciocínio aplicado ao domínio. Em muitos casos, palavras normalmente associadas a resultados positivos ou negativos não são suficientes para determinar a classe correta sem considerar o impacto operacional para o negócio.
 
-Os exemplos few-shot (3 frases, uma por classe) foram mantidos fora do dataset de avaliação para evitar data leakage — critério metodológico adotado também por Pauletti e Silva (2025), que restringiram o LeetCodeEval a problemas publicados após maio de 2023 para forçar raciocínio inédito nos modelos.
+As frases foram elaboradas manualmente para refletir comunicações reais de operações de supply chain, incluindo relatórios de fornecedores, alertas de estoque, registros de recebimento, indicadores de desempenho, processos de homologação e situações de planejamento logístico. O objetivo foi reproduzir cenários plausíveis encontrados na gestão de peças para veículos pesados, utilizando terminologia técnica e relações semânticas que desafiam modelos treinados predominantemente em corpora genéricos.
+
+Os exemplos *few-shot* (3 frases, uma por classe) foram mantidos fora do dataset de avaliação para evitar *data leakage*, critério metodológico adotado também por Pauletti e Silva (2025), que restringiram o LeetCodeEval a problemas publicados após maio de 2023 para forçar raciocínio inédito nos modelos.
 
 3.2 Critério amostral
 
@@ -67,7 +66,7 @@ A margem de erro de uma acurácia medida sobre N amostras segue a fórmula do in
 margem = z × sqrt(p × (1 - p) / N)
 ```
 
-**Por que proporção binomial:** cada frase tem exatamente dois resultados possíveis — acerto (1) ou erro (0). Isso caracteriza uma variável binária, e a distribuição estatística correta para modelar proporções de eventos binários independentes é a distribuição binomial.
+**Por que proporção binomial:** cada frase tem exatamente dois resultados possíveis: acerto (1) ou erro (0). Isso caracteriza uma variável binária, e a distribuição estatística correta para modelar proporções de eventos binários independentes é a distribuição binomial.
 
 **Por que z = 1.96:** é o valor crítico da distribuição normal para 95% de confiança — padrão consolidado na literatura científica. Para 90% seria 1.645; para 99% seria 2.576.
 

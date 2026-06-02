@@ -1,5 +1,5 @@
 """
-Dataset fixo: 90 frases do domínio (supply chain de peças para caminhões).
+01 - Dataset fixo: 90 frases do domínio (supply chain de peças para caminhões).
 Cada entrada tem texto + label correto (positivo / negativo / neutro).
 
 Critério amostral: 30 por classe → margem de erro ±18% (IC 95%, proporção binomial).
