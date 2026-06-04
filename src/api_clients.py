@@ -35,7 +35,7 @@ def call_gemini(system: str, user: str, model: str = "gemini-1.5-flash") -> tupl
     import google.generativeai as genai
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    full_prompt = f"{system}\n\n{user}"
+    full_prompt = f"{system}\n\n{user}" # system e user COLADOS num texto só
     gen_model = genai.GenerativeModel(model) # Primeiro instancia /cria o objeto do modelo
     t0 = time.time()
     response = gen_model.generate_content(       # Chama o método
@@ -51,6 +51,20 @@ def call_gemini(system: str, user: str, model: str = "gemini-1.5-flash") -> tupl
 
 # ── Anthropic ─────────────────────────────────────────────────────────────────
 
+def call_anthropic(system: str, user: str, model: str = "claude-haiku-4-5") -> tuple[str, float]:
+    import anthropic
+
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    t0 = time.time()
+    response = client.messages.create(
+        model=model,
+        max_tokens=50,
+        system=system, # system é um campo separado e dedicado, não entra dentro do array messages
+        messages=[{"role": "user", "content": user}], # só tem uma pergunta e uma resposta. Sem histórico, sem múltiplos turnos. 
+    )
+    elapsed = (time.time() - t0) * 1000
+    text = response.content[0].text.strip().lower()
+    return text, round(elapsed, 1)
 
 # ── Dispatcher ────────────────────────────────────────────────────────────────
 
