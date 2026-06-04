@@ -17,7 +17,6 @@ Compara **3 estratégias de prompt** × **3 provedores de LLM** numa tarefa fixa
 | Chain-of-Thought | Raciocínio passo a passo antes da resposta |
 
 ### Provedores testados
-### Provedores testados
 | Provedor | Modelo | Justificativa |
 |---|---|---|
 | OpenAI | gpt-4.1-mini | Modelo leve de última geração, substituto oficial do gpt-4o-mini |
@@ -129,6 +128,8 @@ Com 30 amostras por classe, diferenças de acurácia acima de 18 pontos percentu
 
 O tamanho atual equilibra rigor estatístico mínimo com custo operacional razoável: 810 chamadas de API com execução em cerca de 10–12 minutos.
 
+Para entender melhor consultar Report.md.
+
 **Por que extrair a última palavra válida na CoT?**
 Na estratégia chain-of-thought, o modelo escreve raciocínio antes da resposta final. A função `extract_label()` garante que apenas o label final seja avaliado, não o texto intermediário.
 
@@ -136,6 +137,8 @@ Na estratégia chain-of-thought, o modelo escreve raciocínio antes da resposta 
 
 ## Referência metodológica
 Pauletti, J. P. O.; Silva, M. P. F. *Análise de Estratégias em Prompt Engineering para identificação de pontos de otimização*. TCC — PUC Minas, 2025.
+
+*Prompt Engineering Guide.* Disponível em: https://www.promptingguide.ai/pt/introduction/basics
 
 Jarrett et al. (2025). *An overview of model uncertainty and variability in LLM-based sentiment analysis: challenges, mitigation strategies, and the role of explainability*. Revisão publicada na Frontiers in Artificial Intelligence. Disponível em: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1609097/full
 
