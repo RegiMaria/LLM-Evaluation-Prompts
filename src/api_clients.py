@@ -1,6 +1,7 @@
 """
 03 - fazer esse 03-06-2026
 Clientes unificados para OpenAI, Gemini e Anthropic.
+Cada função recebe (system_prompt, user_message) e retorna (resposta_texto, tempo_ms)
 As chaves são lidas de variáveis de ambiente.
 """
 
