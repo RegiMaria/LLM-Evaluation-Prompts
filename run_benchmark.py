@@ -163,9 +163,9 @@ def print_summary(results, providers, strategies):
     import statistics
 
     print(f"\n{'='*70}")
-    print(f"{'SUMÁRIO FINAL':^70}")
+    print(f"{'SUMÁRIO FINAL':^70}") # ^ direita / > centro
     print(f"{'='*70}")
-    header = f"{'Provedor':12} {'Estratégia':20} {'Acurácia':>10} {'Tempo médio':>13} {'Consist. (σ)':>13}"
+    header = f"{'Provedor':12} {'Estratégia':20} {'Acurácia':>10} {'Tempo médio':>13} {'Consist. (σ)':>13}" # σ desvio padrão 
     print(header)
     print("-" * 70)
 
@@ -182,4 +182,17 @@ def print_summary(results, providers, strategies):
             print(f"{prov:12} {strat:20} {acc:9.1f}% {avg_t:11.0f}ms {std_t:11.0f}ms")
 
     print("=" * 70)
-    print("\nConsist. (σ) = desvio padrão do tempo de resposta (menor = mais consistente)")
+    print("\nConsist. (σ) = desvio padrão do tempo de resposta (menor = mais consistente)") # σ desvio padrão 
+
+# ── Entrypoint ────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    # Verifica chaves antes de começar
+    missing = [k for k in ["OPENAI_API_KEY", "GEMINI_API_KEY", "ANTHROPIC_API_KEY"]
+               if not os.environ.get(k)]
+    if missing:
+        print(f"[ERRO] Chaves faltando: {missing}")
+        print("Defina as variáveis de ambiente e tente novamente.")
+        sys.exit(1)
+
+    run_benchmark()
