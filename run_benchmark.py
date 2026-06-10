@@ -138,3 +138,16 @@ def run_benchmark(
                 f"acurácia={accuracy:.1f}% | tempo médio={avg_time:.0f}ms | erros={errors}\n"
             )
 
+# ── Salva CSV completo ────────────────────────────────────────────────────
+# pega todos os resultados que ficaram na memória durante o benchmark e salva num arquivo CSV
+   
+    fieldnames = [
+        "provider", "strategy", "sample_id", "text",
+        "true_label", "pred_label", "correct", "elapsed_ms", "raw_response",
+    ]
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames) # Cada linha do results é um dict
+        writer.writeheader()
+        writer.writerows(results)
+
+    print(f"\nCSV salvo em: {output_path}")
