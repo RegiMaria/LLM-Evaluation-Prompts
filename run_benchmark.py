@@ -138,8 +138,8 @@ def run_benchmark(
                 f"acurácia={accuracy:.1f}% | tempo médio={avg_time:.0f}ms | erros={errors}\n"
             )
 
-# ── Salva CSV completo ────────────────────────────────────────────────────
-# pega todos os resultados que ficaram na memória durante o benchmark e salva num arquivo CSV
+    # ── Salva CSV completo ────────────────────────────────────────────────────
+    # pega todos os resultados que ficaram na memória durante o benchmark e salva num arquivo CSV
    
     fieldnames = [
         "provider", "strategy", "sample_id", "text",
@@ -151,3 +151,35 @@ def run_benchmark(
         writer.writerows(results)
 
     print(f"\nCSV salvo em: {output_path}")
+
+
+    # ── Tabela de sumário por (provider, strategy) ────────────────────────────
+    print_summary(results, providers, strategies)
+
+    return output_path
+
+
+def print_summary(results, providers, strategies):
+    import statistics
+
+    print(f"\n{'='*70}")
+    print(f"{'SUMÁRIO FINAL':^70}")
+    print(f"{'='*70}")
+    header = f"{'Provedor':12} {'Estratégia':20} {'Acurácia':>10} {'Tempo médio':>13} {'Consist. (σ)':>13}"
+    print(header)
+    print("-" * 70)
+
+    for prov in providers:
+        for strat in strategies:
+            subset = [r for r in results if r["provider"] == prov and r["strategy"] == strat]
+            if not subset:
+                continue
+            n        = len(subset)
+            acc      = sum(r["correct"] for r in subset) / n * 100
+            times    = [r["elapsed_ms"] for r in subset if r["elapsed_ms"] > 0]
+            avg_t    = sum(times) / len(times) if times else 0
+            std_t    = statistics.stdev(times) if len(times) > 1 else 0
+            print(f"{prov:12} {strat:20} {acc:9.1f}% {avg_t:11.0f}ms {std_t:11.0f}ms")
+
+    print("=" * 70)
+    print("\nConsist. (σ) = desvio padrão do tempo de resposta (menor = mais consistente)")
