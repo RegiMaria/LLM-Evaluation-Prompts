@@ -193,7 +193,7 @@ if __name__ == "__main__":
     rows = load_csv(csv_path)
     print(f"Carregados {len(rows)} registros de {csv_path}")
 
-    accuracy_table(rows)
-    consistency_table(rows)
-    confusion_summary(rows)
-    try_plot(rows, csv_path.parent)
+    accuracy_table(rows) # acurácia geral e por classe
+    consistency_table(rows) # desvio padrão do tempo 
+    confusion_summary(rows)  # onde cada modelo erra
+    try_plot(rows, csv_path.parent)  # gráfico PNG (se matplotlib instalado)
