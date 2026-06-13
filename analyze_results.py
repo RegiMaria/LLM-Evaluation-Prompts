@@ -124,3 +124,53 @@ mostra pra qual classe o modelo errou. muito mais útil pra entender o comportam
 No contexto de borderline cases, verificar se os erros se concentram em neutro, frases onde o modelo
 "chuta" positivo ou negativo quando o correto era neutro. Voltar e olhar pra hipótese do ADR-004.
 """
+
+def try_plot(rows: list[dict], output_dir: Path) -> None:
+    """Gera gráfico de barras de acurácia se matplotlib disponível."""
+    try:
+        import matplotlib.pyplot as plt
+        import matplotlib
+        matplotlib.use("Agg") # não tentar abrir uma janela gráfica, salva direto em arquivo
+    except ImportError:
+        print("\n(matplotlib não instalado, pule os gráficos ou: pip install matplotlib)")
+        return
+
+    combos   = sorted({(r["provider"], r["strategy"]) for r in rows})
+    labels   = [f"{p}\n{s}" for p, s in combos]
+    accs     = []
+    for prov, strat in combos:
+        subset = [r for r in rows if r["provider"] == prov and r["strategy"] == strat]
+        accs.append(sum(int(r["correct"]) for r in subset) / len(subset) * 100)
+
+    colors = {
+        "zero_shot": "#5B8DB8", "few_shot": "#E8A838", "chain_of_thought": "#6BAF8A"
+    }
+    bar_colors = [colors.get(strat, "#999") for _, strat in combos]
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    bars = ax.bar(range(len(labels)), accs, color=bar_colors, edgecolor="white", linewidth=1.5)
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylabel("Acurácia (%)")
+    ax.set_title("Benchmark de Prompt Engineering — Supply Chain de Peças para Caminhões")
+    ax.set_ylim(0, 110)
+    for bar, val in zip(bars, accs):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
+                f"{val:.1f}%", ha="center", va="bottom", fontsize=9, fontweight="bold")
+
+    from matplotlib.patches import Patch
+    legend_elements = [Patch(facecolor=v, label=k.replace("_", "-")) for k, v in colors.items()]
+    ax.legend(handles=legend_elements, loc="lower right")
+
+    out = output_dir / "accuracy_chart.png"
+    plt.tight_layout()
+    plt.savefig(out, dpi=150)
+    print(f"\nGráfico salvo em: {out}")
+
+"""
+O gráfico monta o gráfico e calcula a acurácai de cada combo e cria as baaras com cores fixads por estratégias
+🔵 azul -> zero_shot
+🟡 amarelo -> few_shot
+🟢 verde ->→ chain_of_thought
+Lembra de colocar no relatório ou no README do projeto mostrando os resultados do experimento.
+"""
