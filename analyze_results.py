@@ -60,25 +60,30 @@ Fizemos borderline cases no dataset (ADR-003, ADR-004), que são frases de front
 A coluna por classe vai revelar se o CoT realmente ajudou nesses casos ou se o modelo ainda erra sistematicamente as frases neutro,
 que costumam ser as mais ambíguas.
 """
-
 def consistency_table(rows: list[dict]) -> None:
-    """Desvio padrão do tempo de resposta por (provider, strategy)."""
+    """Tempo médio e desvio padrão por (provider, strategy)."""
     combos = sorted({(r["provider"], r["strategy"]) for r in rows})
 
-    print(f"\n{'='*60}")
-    print(f"{'CONSISTÊNCIA (desvio padrão do tempo)':^60}")
-    print(f"{'='*60}")
-    print(f"{'Provedor':12} {'Estratégia':20} {'Média':>10} {'σ':>10}")
-    print("-" * 60)
+    print(f"\n{'='*65}")
+    print(f"{'CONSISTÊNCIA (TEMPO DE RESPOSTA)':^65}")
+    print(f"{'='*65}")
+    print(f"{'Provedor':12} {'Estratégia':20} {'Média (ms)':>12} {'σ (ms)':>10} {'Min':>8} {'Max':>8}")
+    print("-" * 65)
 
     for prov, strat in combos:
-        subset = [r for r in rows if r["provider"] == prov and r["strategy"] == strat]
-        times  = [float(r["elapsed_ms"]) for r in subset if float(r["elapsed_ms"]) > 0]
-        avg_t  = sum(times) / len(times) if times else 0
-        std_t  = statistics.stdev(times) if len(times) > 1 else 0
-        print(f"{prov:12} {strat:20} {avg_t:9.0f}ms {std_t:9.0f}ms")
+        times = [
+            float(r["elapsed_ms"])
+            for r in rows
+            if r["provider"] == prov and r["strategy"] == strat and float(r["elapsed_ms"]) > 0
+        ]
+        if not times:
+            continue
+        avg = statistics.mean(times)
+        std = statistics.stdev(times) if len(times) > 1 else 0
+        print(f"{prov:12} {strat:20} {avg:11.0f} {std:9.0f} {min(times):7.0f} {max(times):7.0f}")
+    print("=" * 65)
+    print("\nσ menor = modelo mais previsível e consistente")
 
-    print("=" * 60)
 
 """
 Mede a consistência de cada modelo, o quanto o tempo de resposta varia entre chamadas.
@@ -86,4 +91,36 @@ O desvio padrão (σ) diz: se a média é 800ms mas o σ é 600ms, o modelo é i
 Se o σ é 50ms, ele é consistente.
 Isso e importnte pro experimento porque tempo instável pode indicar sobrecarga do servidor do provedor, throttling, 
 ou comportamento diferente pra prompts longos (como CoT) vs curtos (zero-shot).
+"""
+
+def confusion_summary(rows: list[dict]) -> None:
+    """Erros mais comuns: onde cada modelo/estratégia erra. mostra onde cada modelo erra, não só quanto"""
+    combos = sorted({(r["provider"], r["strategy"]) for r in rows})
+    labels = ["positivo", "negativo", "neutro"]
+
+    print(f"\n{'='*65}")
+    print(f"{'ERROS POR CLASSE (falsos negativos por categoria)':^65}")
+    print(f"{'='*65}")
+
+    for prov, strat in combos:
+        subset = [r for r in rows if r["provider"] == prov and r["strategy"] == strat
+                  and int(r["correct"]) == 0 and r["pred_label"] != "erro"]
+        if not subset:
+            print(f"{prov}/{strat}: nenhum erro!")
+            continue
+        print(f"\n{prov} / {strat} — {len(subset)} erros:")
+        for lbl in labels:
+            wrong = [r for r in subset if r["true_label"] == lbl]
+            if wrong:
+                pred_counts = defaultdict(int)
+                for r in wrong:
+                    pred_counts[r["pred_label"]] += 1
+                detail = ", ".join(f"{k}→{v}x" for k, v in pred_counts.items())
+                print(f"  {lbl:10}: {len(wrong)} erros ({detail})")
+
+"""
+Para cada combinação provedor + estratégia, lista os erros agrupados por classe verdadeira e
+mostra pra qual classe o modelo errou. muito mais útil pra entender o comportamento do modelo.
+No contexto de borderline cases, verificar se os erros se concentram em neutro, frases onde o modelo
+"chuta" positivo ou negativo quando o correto era neutro. Voltar e olhar pra hipótese do ADR-004.
 """
