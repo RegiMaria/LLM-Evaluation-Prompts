@@ -60,3 +60,30 @@ Fizemos borderline cases no dataset (ADR-003, ADR-004), que são frases de front
 A coluna por classe vai revelar se o CoT realmente ajudou nesses casos ou se o modelo ainda erra sistematicamente as frases neutro,
 que costumam ser as mais ambíguas.
 """
+
+def consistency_table(rows: list[dict]) -> None:
+    """Desvio padrão do tempo de resposta por (provider, strategy)."""
+    combos = sorted({(r["provider"], r["strategy"]) for r in rows})
+
+    print(f"\n{'='*60}")
+    print(f"{'CONSISTÊNCIA (desvio padrão do tempo)':^60}")
+    print(f"{'='*60}")
+    print(f"{'Provedor':12} {'Estratégia':20} {'Média':>10} {'σ':>10}")
+    print("-" * 60)
+
+    for prov, strat in combos:
+        subset = [r for r in rows if r["provider"] == prov and r["strategy"] == strat]
+        times  = [float(r["elapsed_ms"]) for r in subset if float(r["elapsed_ms"]) > 0]
+        avg_t  = sum(times) / len(times) if times else 0
+        std_t  = statistics.stdev(times) if len(times) > 1 else 0
+        print(f"{prov:12} {strat:20} {avg_t:9.0f}ms {std_t:9.0f}ms")
+
+    print("=" * 60)
+
+"""
+Mede a consistência de cada modelo, o quanto o tempo de resposta varia entre chamadas.
+O desvio padrão (σ) diz: se a média é 800ms mas o σ é 600ms, o modelo é imprevisível, às vezes responde em 200ms, às vezes em 1400ms.
+Se o σ é 50ms, ele é consistente.
+Isso e importnte pro experimento porque tempo instável pode indicar sobrecarga do servidor do provedor, throttling, 
+ou comportamento diferente pra prompts longos (como CoT) vs curtos (zero-shot).
+"""
