@@ -174,3 +174,26 @@ O gráfico monta o gráfico e calcula a acurácai de cada combo e cria as baaras
 🟢 verde ->→ chain_of_thought
 Lembra de colocar no relatório ou no README do projeto mostrando os resultados do experimento.
 """
+
+
+# ── Entrypoint ────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        # Tenta o CSV mais recente na pasta results/
+        csvs = sorted(Path("results").glob("benchmark_*.csv"), reverse=True)
+        if not csvs:
+            print("Uso: python analyze_results.py results/benchmark_YYYYMMDD_HHMMSS.csv")
+            sys.exit(1)
+        csv_path = csvs[0] # sempre o último benchmark rodado
+        print(f"Usando o CSV mais recente: {csv_path}")
+    else:
+        csv_path = Path(sys.argv[1])
+
+    rows = load_csv(csv_path)
+    print(f"Carregados {len(rows)} registros de {csv_path}")
+
+    accuracy_table(rows)
+    consistency_table(rows)
+    confusion_summary(rows)
+    try_plot(rows, csv_path.parent)
