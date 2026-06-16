@@ -11,7 +11,7 @@ import time
 
 # ── OpenAI ────────────────────────────────────────────────────────────────────
 
-def call_openai(system: str, user: str, model: str = "gpt-4o-mini") -> tuple[str, float]:
+def call_openai(system: str, user: str, model: str = "gpt-4.1-mini") -> tuple[str, float]:
     from openai import OpenAI
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -32,7 +32,7 @@ def call_openai(system: str, user: str, model: str = "gpt-4o-mini") -> tuple[str
 # ── Gemini ────────────────────────────────────────────────────────────────────
 # Gemini não tem esse conceito de campos distintos (role: system) 
 # Ela espera um único texto. Por isso tem que precisa juntar tudo manualmente antes de enviar
-def call_gemini(system: str, user: str, model: str = "gemini-1.5-flash") -> tuple[str, float]:
+def call_gemini(system: str, user: str, model: str = "gemini-2.5-flash") -> tuple[str, float]:
     import google.generativeai as genai
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
