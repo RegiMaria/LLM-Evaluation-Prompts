@@ -128,9 +128,9 @@ No contexto de borderline cases, verificar se os erros se concentram em neutro, 
 def try_plot(rows: list[dict], output_dir: Path) -> None:
     """Gera gráfico de barras de acurácia se matplotlib disponível."""
     try:
-        import matplotlib.pyplot as plt
         import matplotlib
         matplotlib.use("Agg") # não tentar abrir uma janela gráfica, salva direto em arquivo
+        import matplotlib.pyplot as plt
     except ImportError:
         print("\n(matplotlib não instalado, pule os gráficos ou: pip install matplotlib)")
         return
